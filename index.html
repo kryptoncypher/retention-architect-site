@@ -3,58 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Retention Architect</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Retention Architect | Narrative Engineering</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500&family=Sora:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --bg: #0D0D0F;
-        --bg-alt: #121214;
-        --text: #F2F2F2;
-        --text-dim: #888888;
-        --accent: #B88A44; /* Muted Amber */
-        --accent-dim: rgba(184, 138, 68, 0.2);
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    *, *::before, *::after {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+    :root {
+      --bg: #050505;
+      --bg-alt: #0a0a0a;
+      --text: #e0e0e0;
+      --text-dim: #888;
+      --accent: #ff2a2a; /* Blood Red */
+      --accent-glow: rgba(255, 42, 42, 0.15);
+      --glass: rgba(20, 20, 20, 0.8);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) var(--bg);
     }
 
     body {
-        background-color: var(--bg);
-        color: var(--text);
-        font-family: 'Inter', sans-serif;
-        line-height: 1.6;
-        font-weight: 300;
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
+      font-family: 'Inter', 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
 
-    h1, h2, h3, h4 {
-        font-family: 'Playfair Display', serif;
-        font-weight: 400;
-        letter-spacing: -0.02em;
-        line-height: 1.2;
-    }
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
-    /* GRAIN TEXTURE */
-    body::after {
-        content: "";
+    /* ── Animated Background ── */
+    .fog {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+        background: radial-gradient(circle at 50% 50%, #1a0000 0%, #000000 80%);
+        z-index: -1;
+        opacity: 0.6;
+    }
+
+    canvas#particles {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: 0;
         pointer-events: none;
-        z-index: 9999;
+    }
+
+    /* ── Typography ── */
+    h1, h2, h3, h4 {
+        font-family: 'Cinzel', serif;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        line-height: 1.2;
+        text-transform: uppercase;
     }
 
     .container {
-        max-width: 1000px;
+        max-width: 1100px;
         margin: 0 auto;
-        padding: 0 40px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 2;
     }
 
-    /* 1. HERO */
+    /* ── Hero ── */
     .hero {
         height: 100vh;
         display: flex;
@@ -62,132 +84,172 @@
         justify-content: center;
         align-items: center;
         text-align: center;
+        padding: 2rem;
+    }
+
+    .hero-title {
+        font-size: clamp(3rem, 7vw, 5rem);
+        letter-spacing: 5px;
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: 10px;
+        text-shadow: 0 0 20px rgba(255, 42, 42, 0.5);
+        margin: 0;
         opacity: 0;
-        animation: fadeIn 2s ease forwards;
+        animation: fadeIn 1.5s ease forwards;
     }
 
-    .hero h1 {
-        font-size: clamp(3rem, 6vw, 5rem);
-        margin-bottom: 1.5rem;
-        color: var(--text);
+    .hero-subtitle {
+        font-size: 1.2rem;
+        color: var(--accent);
+        letter-spacing: 0.2em;
+        margin-top: 1rem;
+        opacity: 0;
+        animation: fadeIn 1.5s ease 0.5s forwards;
     }
 
-    .hero p {
-        font-size: 1.1rem;
+    .hero-text {
+        font-size: 1rem;
         color: var(--text-dim);
         max-width: 600px;
-        margin-bottom: 3rem;
+        margin-top: 2rem;
+        opacity: 0;
+        animation: fadeIn 1.5s ease 1s forwards;
     }
 
     .btn {
         display: inline-block;
-        padding: 14px 28px;
+        padding: 12px 30px;
+        margin-top: 30px;
         background: transparent;
-        border: 1px solid rgba(255,255,255,0.2);
-        color: var(--text);
+        border: 1px solid var(--accent);
+        color: var(--accent);
         text-decoration: none;
+        font-weight: bold;
         font-size: 0.9rem;
-        letter-spacing: 0.05em;
-        transition: all 0.4s ease;
-        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.1em;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        opacity: 0;
+        animation: fadeIn 1.5s ease 1.5s forwards;
     }
 
     .btn:hover {
-        border-color: var(--accent);
-        color: var(--accent);
+        background: var(--accent);
+        color: #000;
+        box-shadow: 0 0 20px var(--accent-glow);
     }
 
     .btn-secondary {
-        border: none;
-        color: var(--text-dim);
-        margin-left: 20px;
+        border-color: #444;
+        color: #888;
+        margin-left: 15px;
     }
-    
+
     .btn-secondary:hover {
-        color: var(--text);
-        border: none;
+        border-color: #fff;
+        color: #fff;
+        background: transparent;
+        box-shadow: none;
     }
 
-    /* 2. PSYCHOLOGICAL STATEMENT */
-    .statement {
-        padding: 10rem 0;
-        text-align: center;
-        background: var(--bg-alt);
-    }
-
-    .statement p {
-        font-family: 'Playfair Display', serif;
-        font-size: clamp(1.5rem, 3vw, 2.2rem);
-        color: rgba(255,255,255,0.9);
-        max-width: 800px;
-        margin: 0 auto;
-        line-height: 1.4;
-    }
-
-    /* 3. MANIFESTO */
-    .manifesto {
+    /* ── Sections ── */
+    section {
         padding: 8rem 0;
     }
 
-    .section-title {
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.2em;
+    .section-label {
+        font-family: 'Cinzel', serif;
+        font-size: 1rem;
+        letter-spacing: 0.3em;
         color: var(--accent);
+        text-align: center;
         margin-bottom: 3rem;
         display: block;
+        text-shadow: 0 0 10px rgba(255, 42, 42, 0.3);
     }
 
-    .manifesto-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-    }
-
-    .manifesto-text p {
-        margin-bottom: 1.5rem;
-        color: var(--text-dim);
-    }
-
-    /* 4. FRAMEWORK */
-    .framework {
-        padding: 8rem 0;
-    }
-
-    .framework-item {
-        border-top: 1px solid rgba(255,255,255,0.1);
-        padding: 2rem 0;
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 2rem;
-        transition: border-color 0.3s;
-    }
-
-    .framework-item:hover {
-        border-color: var(--accent);
-    }
-
-    .framework-item h3 {
+    /* ── Philosophy / About ── */
+    .about-text {
+        text-align: center;
         font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto;
+        color: #ccc;
     }
 
-    .framework-item p {
-        color: var(--text-dim);
-        font-size: 0.95rem;
+    .stats-grid {
+        display: flex;
+        justify-content: center;
+        gap: 4rem;
+        margin-top: 4rem;
+        flex-wrap: wrap;
     }
 
-    /* 6. CASE STUDIES */
-    .cases {
-        padding: 8rem 0;
-        background: var(--bg-alt);
+    .stat h3 {
+        font-size: 2.5rem;
+        color: var(--accent);
+        margin: 0;
+    }
+
+    .stat p {
+        font-size: 0.8rem;
+        letter-spacing: 0.1em;
+        color: #666;
+        text-transform: uppercase;
+    }
+
+    /* ── Framework ── */
+    .framework-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .framework-card {
+        background: var(--glass);
+        border: 1px solid #222;
+        padding: 2rem;
+        transition: 0.3s;
+    }
+
+    .framework-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-5px);
+    }
+
+    .framework-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: #fff;
+    }
+
+    .framework-card p {
+        font-size: 0.9rem;
+        color: #999;
+    }
+
+    /* ── Portfolio ── */
+    .portfolio-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
     }
 
     .case-card {
-        margin-bottom: 6rem;
+        background: var(--glass);
+        border: 1px solid #333;
+        padding: 2rem;
+        position: relative;
+        transition: 0.3s;
+    }
+
+    .case-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 10px 30px rgba(255, 0, 0, 0.1);
     }
 
     .case-meta {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: var(--accent);
         letter-spacing: 0.1em;
         text-transform: uppercase;
@@ -195,306 +257,275 @@
         display: block;
     }
 
-    .case-card h3 {
-        font-size: 2.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .case-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2rem;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        padding-top: 1.5rem;
-    }
-
-    .case-col h4 {
-        font-size: 0.85rem;
-        color: #fff;
-        margin-bottom: 0.5rem;
-        font-family: 'Inter', sans-serif;
-    }
-
-    .case-col p {
-        font-size: 0.9rem;
-        color: var(--text-dim);
-    }
-
-    /* 7. PROCESS */
-    .process {
-        padding: 8rem 0;
-    }
-
-    .process-step {
-        margin-bottom: 3rem;
-        padding-left: 2rem;
-        border-left: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .process-step h3 {
+    .case-title {
         font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    /* 9. SELECTIVITY */
-    .selective {
-        padding: 6rem 0;
-        background: #101012;
-        border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .selective-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-    }
-
-    .selective ul {
-        list-style: none;
-    }
-
-    .selective li {
         margin-bottom: 1rem;
-        padding-left: 1.5rem;
-        position: relative;
-        color: var(--text-dim);
+        color: #fff;
     }
 
-    .selective li::before {
-        content: "•";
-        position: absolute;
-        left: 0;
-        color: var(--accent);
+    .case-strategy {
+        font-size: 0.9rem;
+        color: #bbb;
+        margin-bottom: 1.5rem;
+        border-left: 2px solid var(--accent);
+        padding-left: 1rem;
     }
 
-    /* 10. CTA */
-    .cta {
-        height: 80vh;
+    .tag {
+        font-size: 0.7rem;
+        background: #222;
+        padding: 4px 8px;
+        margin-right: 5px;
+        border-radius: 4px;
+        color: #888;
+    }
+
+    /* ── Hook Engineering ── */
+    .hook-sequence {
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .hook-word {
+        font-family: 'Cinzel', serif;
+        font-size: 1.2rem;
+        color: #fff;
+    }
+
+    .hook-dot {
+        width: 4px;
+        height: 4px;
+        background: var(--accent);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent);
+    }
+
+    /* ── Contact ── */
+    .contact {
         text-align: center;
+        padding-bottom: 10rem;
     }
 
-    .cta h2 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        margin-bottom: 2rem;
+    .contact h2 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
     }
 
-    /* FOOTER */
     footer {
-        padding: 3rem 0;
         text-align: center;
-        border-top: 1px solid rgba(255,255,255,0.05);
-        color: rgba(255,255,255,0.2);
+        padding: 2rem;
         font-size: 0.8rem;
+        color: #444;
+        border-top: 1px solid #111;
     }
 
     @keyframes fadeIn {
         to { opacity: 1; }
     }
 
+    /* Responsive */
     @media (max-width: 768px) {
-        .manifesto-grid, .framework-item, .case-grid, .selective-grid {
-            grid-template-columns: 1fr;
-        }
-        .framework-item { gap: 0.5rem; }
+        .hero-title { font-size: 2.5rem; }
+        .stats-grid { flex-direction: column; gap: 2rem; }
     }
 </style>
 </head>
 <body>
 
-<!-- 1. HERO -->
+<div class="fog"></div>
+<canvas id="particles"></canvas>
+
+<!-- HERO -->
 <section class="hero">
-    <div class="container">
-        <h1>Attention Is Fragile.<br>Structure Is Absolute.</h1>
-        <p>I engineer narrative architectures for documentary films that sustain psychological tension, extend view duration, and turn curiosity into obsession.</p>
-        <div>
-            <a href="#contact" class="btn">Begin Retention Diagnosis</a>
-            <a href="#cases" class="btn btn-secondary">View Narrative Studies</a>
-        </div>
+    <h1 class="hero-title">RETENTION<br>ARCHITECT</h1>
+    <h2 class="hero-subtitle">NARRATIVE ENGINEERING</h2>
+    <p class="hero-text">I construct psychological environments for documentaries. My scripts are not written; they are engineered for AVD, sustained tension, and obsession.</p>
+    <div>
+        <a href="#contact" class="btn">INITIALIZE PROTOCOL</a>
+        <a href="#portfolio" class="btn btn-secondary">VIEW EVIDENCE</a>
     </div>
 </section>
 
-<!-- 2. PSYCHOLOGICAL STATEMENT -->
-<section class="statement">
+<!-- PHILOSOPHY -->
+<section>
     <div class="container">
-        <p>"Retention is not about what you say. It is about what you withhold. The viewer does not watch for information; they watch for the resolution of tension."</p>
-    </div>
-</section>
-
-<!-- 3. PHILOSOPHY -->
-<section class="manifesto">
-    <div class="container">
-        <span class="section-title">The Philosophy</span>
-        <div class="manifesto-grid">
-            <div class="manifesto-text">
-                <p>Most creators confuse information with engagement. They believe that if the facts are interesting, the viewer will stay. This is false. Facts are data. Narrative is the engine that moves data through the mind.</p>
-                <p>I do not write scripts. I design psychological environments. Spaces where the viewer enters and cannot leave until the door is unlocked from the inside. This requires architecture, not just writing.</p>
+        <span class="section-label">THE PHILOSOPHY</span>
+        <p class="about-text">
+            "Retention is not about what you say. It is about what you withhold. The viewer does not watch for information; they watch for the resolution of tension."
+        </p>
+        <div class="stats-grid">
+            <div class="stat">
+                <h3>High</h3>
+                <p>Curiosity Loops</p>
             </div>
-            <div class="manifesto-text">
-                <p>Tension is structural. It is built beam by beam, question by question. A documentary without structure is a lecture. A documentary with structure is a trap. I build the trap.</p>
+            <div class="stat">
+                <h3>Deep</h3>
+                <p>Psychological Hooks</p>
             </div>
-        </div>
-    </div>
-</section>
-
-<!-- 4. FRAMEWORK -->
-<section class="framework">
-    <div class="container">
-        <span class="section-title">The Retention Framework</span>
-        
-        <div class="framework-item">
-            <h3>Information Gap Calibration</h3>
-            <p>The strategic withholding of answers. We open a question, delay the resolution, and introduce a new question before closing the first. The brain cannot disengage from an open loop.</p>
-        </div>
-
-        <div class="framework-item">
-            <h3>Escalation Mapping</h3>
-            <p>A narrative must climb. We map the emotional stakes of the story, ensuring that minute 10 carries more weight than minute 5. Stagnation is the enemy of retention.</p>
-        </div>
-
-        <div class="framework-item">
-            <h3>Pattern Interrupt Placement</h3>
-            <p>Predictability kills attention. We inject calculated shifts in tone, pacing, or perspective every 120 seconds to reset the viewer's dopamine baseline.</p>
-        </div>
-
-        <div class="framework-item">
-            <h3>Emotional Mirror Technique</h3>
-            <p>We do not just report facts; we anchor them in human experience. We force the viewer to see themselves in the subject, turning observation into empathy.</p>
-        </div>
-
-        <div class="framework-item">
-            <h3>Controlled Ambiguity</h3>
-            <p>We resist the urge to over-explain. By leaving strategic gaps in the narrative, we force the viewer to lean in and participate in the investigation.</p>
-        </div>
-    </div>
-</section>
-
-<!-- 5. WHY SCRIPTS FAIL (Text Only Block) -->
-<section class="statement" style="background: #0D0D0F; padding: 6rem 0;">
-    <div class="container">
-        <span class="section-title">Why Scripts Fail</span>
-        <p style="font-size: 1.5rem;">Most documentaries fail not because the topic is boring, but because the structure is linear. A straight line has no tension. We build spirals.</p>
-    </div>
-</section>
-
-<!-- 6. CASE STUDIES -->
-<section id="cases" class="cases">
-    <div class="container">
-        <span class="section-title">Narrative Studies</span>
-
-        <!-- Case 1 -->
-        <div class="case-card">
-            <span class="case-meta">Case Study 01 • The Vanishing</span>
-            <h3>The Dyatlov Pass Incident</h3>
-            <div class="case-grid">
-                <div class="case-col">
-                    <h4>The Problem</h4>
-                    <p>A widely known story. The audience thinks they already know the ending. How do we hold attention when the mystery is 60 years old?</p>
-                </div>
-                <div class="case-col">
-                    <h4>The Strategy</h4>
-                    <p>The "False Hypothesis." We present the three most common theories as truth, then systematically dismantle them, forcing the viewer to question their own knowledge.</p>
-                </div>
-                <div class="case-col">
-                    <h4>The Impact</h4>
-                    <p>Sustained curiosity loops. The viewer stays not to learn what happened, but to find out why their assumption was wrong.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Case 2 -->
-        <div class="case-card">
-            <span class="case-meta">Case Study 02 • The Heist</span>
-            <h3>D.B. Cooper</h3>
-            <div class="case-grid">
-                <div class="case-col">
-                    <h4>The Problem</h4>
-                    <p>Low visual assets. A story that takes place entirely inside a plane. Risk of visual fatigue.</p>
-                </div>
-                <div class="case-col">
-                    <h4>The Strategy</h4>
-                    <p>"Tick-Tock Pacing." We synced the script to the real-time flight path minutes. The narrative moves at the speed of the jet.</p>
-                </div>
-                <div class="case-col">
-                    <h4>The Impact</h4>
-                    <p>Artificial urgency. Even though the event is historical, the viewer feels the pressure of the present moment.</p>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<!-- 7. PROCESS -->
-<section class="process">
-    <div class="container">
-        <span class="section-title">The Protocol</span>
-        
-        <div class="process-step">
-            <h3>01. Narrative Diagnosis</h3>
-            <p>We analyze your source material. We find the "Unseen Angle"—the one thread that connects the facts to a deeper truth.</p>
-        </div>
-
-        <div class="process-step">
-            <h3>02. Structural Blueprint</h3>
-            <p>Before a word is written, we map the beats. We identify the Cold Open, the Mid-Point Twist, and the Philosophical Turn.</p>
-        </div>
-
-        <div class="process-step">
-            <h3>03. Script Engineering</h3>
-            <p>Drafting the narrative with precise attention to visual cues, audio transitions, and spoken rhythm. Writing for the edit.</p>
-        </div>
-
-        <div class="process-step">
-            <h3>04. Calibration</h3>
-            <p>Refining the language. Cutting the fluff. Sharpening the hooks. Ensuring every sentence earns its place.</p>
-        </div>
-    </div>
-</section>
-
-<!-- 9. SELECTIVITY -->
-<section class="selective">
-    <div class="container">
-        <div class="selective-grid">
-            <div>
-                <h3 style="margin-bottom: 1.5rem; color: #fff;">For Creators Who:</h3>
-                <ul>
-                    <li>View YouTube as cinema, not content.</li>
-                    <li>Prioritize AVD over clickbait.</li>
-                    <li>Are willing to challenge their audience.</li>
-                    <li>Understand that quality is the only moat left.</li>
-                </ul>
-            </div>
-            <div>
-                <h3 style="margin-bottom: 1.5rem; color: #555;">Not For:</h3>
-                <ul>
-                    <li>Daily uploaders looking for "filler."</li>
-                    <li>Channels relying on listicles or AI-voiceovers.</li>
-                    <li>Creators who want "just a writer."</li>
-                    <li>Those unwilling to invest in pre-production.</li>
-                </ul>
+            <div class="stat">
+                <h3>Absolute</h3>
+                <p>Narrative Control</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- 10. CTA -->
-<section id="contact" class="cta">
+<!-- FRAMEWORK -->
+<section>
     <div class="container">
-        <h2>Your Story Deserves Structure.</h2>
-        <p style="margin-bottom: 3rem; color: var(--text-dim);">Stop leaking viewers. Start engineering obsession.</p>
-        <a href="https://formsubmit.co/chaitanya.krishna2608@gmail.com" class="btn">Initiate Collaboration</a>
+        <span class="section-label">THE FRAMEWORK</span>
+        <div class="framework-grid">
+            <div class="framework-card">
+                <h3>Information Gap Calibration</h3>
+                <p>Opening a question, delaying the answer, and introducing a new mystery before closing the first. The brain cannot disengage.</p>
+            </div>
+            <div class="framework-card">
+                <h3>Escalation Mapping</h3>
+                <p>Ensuring minute 10 carries more weight than minute 5. Stagnation is the enemy. We climb.</p>
+            </div>
+            <div class="framework-card">
+                <h3>Pattern Interrupts</h3>
+                <p>Calculated shifts in tone, pacing, or perspective every 90 seconds to reset the viewer's dopamine baseline.</p>
+            </div>
+            <div class="framework-card">
+                <h3>Controlled Ambiguity</h3>
+                <p>Resisting the urge to over-explain. We force the viewer to lean in and participate in the investigation.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+    <div class="container">
+        <span class="section-label">CASE STUDIES</span>
+        <div class="portfolio-grid">
+            <!-- Case 1 -->
+            <div class="case-card">
+                <span class="case-meta">Case No. 001</span>
+                <h3 class="case-title">The D.B. Cooper Incident</h3>
+                <div class="case-strategy">
+                    <strong>Strategy: Tick-Tock Pacing.</strong> Synced to the real-time flight path. Artificial urgency created through time-locked beats.
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <span class="tag">Cold Case</span>
+                    <span class="tag">High Tension</span>
+                </div>
+                <a href="#" class="btn" style="margin-top: 0; padding: 8px 20px; font-size: 0.8rem;">VIEW SCRIPT</a>
+            </div>
+
+            <!-- Case 2 -->
+            <div class="case-card">
+                <span class="case-meta">Case No. 002</span>
+                <h3 class="case-title">The Dyatlov Pass</h3>
+                <div class="case-strategy">
+                    <strong>Strategy: The False Hypothesis.</strong> Systematically dismantling common theories to force the viewer into the "Deep Lore."
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <span class="tag">Mystery</span>
+                    <span class="tag">Debate Bait</span>
+                </div>
+                <a href="#" class="btn" style="margin-top: 0; padding: 8px 20px; font-size: 0.8rem;">VIEW SCRIPT</a>
+            </div>
+
+            <!-- Case 3 -->
+            <div class="case-card">
+                <span class="case-meta">Case No. 003</span>
+                <h3 class="case-title">Maura Murray</h3>
+                <div class="case-strategy">
+                    <strong>Strategy: Emotional Mirroring.</strong> Shifting focus from evidence to victim psychology to create a parasocial bond.
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <span class="tag">Missing Person</span>
+                    <span class="tag">Psychology</span>
+                </div>
+                <a href="#" class="btn" style="margin-top: 0; padding: 8px 20px; font-size: 0.8rem;">VIEW SCRIPT</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PROCESS -->
+<section>
+    <div class="container">
+        <span class="section-label">THE PROTOCOL</span>
+        <div class="hook-sequence">
+            <span class="hook-word">Diagnosis</span>
+            <div class="hook-dot"></div>
+            <span class="hook-word">Blueprint</span>
+            <div class="hook-dot"></div>
+            <span class="hook-word">Engineering</span>
+            <div class="hook-dot"></div>
+            <span class="hook-word">Calibration</span>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact">
+    <div class="container">
+        <h2>READY TO FIX YOUR DROP-OFF?</h2>
+        <p style="color: #888; margin-bottom: 3rem;">You don't need more views. You need better retention.</p>
+        <a href="https://formsubmit.co/chaitanya.krishna2608@gmail.com" class="btn">CLAIM RETENTION AUDIT</a>
     </div>
 </section>
 
 <footer>
-    <div class="container">
-        <p>Retention Architect © 2026. Narrative Engineering.</p>
-    </div>
+    <p>Retention Architect © 2026</p>
 </footer>
+
+<script>
+  // PARTICLES (From previous design)
+  (function() {
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let w, h;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+
+    function createParticles() {
+      particles = [];
+      const count = Math.floor((w * h) / 15000);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.5,
+          dx: (Math.random() - 0.5) * 0.2,
+          dy: (Math.random() - 0.5) * 0.2,
+          o: Math.random() * 0.5 + 0.1
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      for (let p of particles) {
+        p.x += p.dx;
+        p.y += p.dy;
+        if(p.x < 0) p.x = w; if(p.x > w) p.x = 0;
+        if(p.y < 0) p.y = h; if(p.y > h) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 42, 42, ${p.o})`; // Red particles
+        ctx.fill();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    resize();
+    createParticles();
+    animate();
+    window.addEventListener('resize', () => { resize(); createParticles(); });
+  })();
+</script>
 
 </body>
 </html>
