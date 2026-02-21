@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retention Architect</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg: #0D0D0F;
+        --bg-alt: #121214;
+        --text: #F2F2F2;
+        --text-dim: #888888;
+        --accent: #B88A44; /* Muted Amber */
+        --accent-dim: rgba(184, 138, 68, 0.2);
+    }
+
+    *, *::before, *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: 'Inter', sans-serif;
+        line-height: 1.6;
+        font-weight: 300;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+    }
+
+    /* GRAIN TEXTURE */
+    body::after {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 9999;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 40px;
+    }
+
+    /* 1. HERO */
+    .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        opacity: 0;
+        animation: fadeIn 2s ease forwards;
+    }
+
+    .hero h1 {
+        font-size: clamp(3rem, 6vw, 5rem);
+        margin-bottom: 1.5rem;
+        color: var(--text);
+    }
+
+    .hero p {
+        font-size: 1.1rem;
+        color: var(--text-dim);
+        max-width: 600px;
+        margin-bottom: 3rem;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 14px 28px;
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.2);
+        color: var(--text);
+        text-decoration: none;
+        font-size: 0.9rem;
+        letter-spacing: 0.05em;
+        transition: all 0.4s ease;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+    .btn-secondary {
+        border: none;
+        color: var(--text-dim);
+        margin-left: 20px;
+    }
+    
+    .btn-secondary:hover {
+        color: var(--text);
+        border: none;
+    }
+
+    /* 2. PSYCHOLOGICAL STATEMENT */
+    .statement {
+        padding: 10rem 0;
+        text-align: center;
+        background: var(--bg-alt);
+    }
+
+    .statement p {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
+        color: rgba(255,255,255,0.9);
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.4;
+    }
+
+    /* 3. MANIFESTO */
+    .manifesto {
+        padding: 8rem 0;
+    }
+
+    .section-title {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--accent);
+        margin-bottom: 3rem;
+        display: block;
+    }
+
+    .manifesto-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+    }
+
+    .manifesto-text p {
+        margin-bottom: 1.5rem;
+        color: var(--text-dim);
+    }
+
+    /* 4. FRAMEWORK */
+    .framework {
+        padding: 8rem 0;
+    }
+
+    .framework-item {
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding: 2rem 0;
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+        transition: border-color 0.3s;
+    }
+
+    .framework-item:hover {
+        border-color: var(--accent);
+    }
+
+    .framework-item h3 {
+        font-size: 1.2rem;
+    }
+
+    .framework-item p {
+        color: var(--text-dim);
+        font-size: 0.95rem;
+    }
+
+    /* 6. CASE STUDIES */
+    .cases {
+        padding: 8rem 0;
+        background: var(--bg-alt);
+    }
+
+    .case-card {
+        margin-bottom: 6rem;
+    }
+
+    .case-meta {
+        font-size: 0.75rem;
+        color: var(--accent);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .case-card h3 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .case-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 1.5rem;
+    }
+
+    .case-col h4 {
+        font-size: 0.85rem;
+        color: #fff;
+        margin-bottom: 0.5rem;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .case-col p {
+        font-size: 0.9rem;
+        color: var(--text-dim);
+    }
+
+    /* 7. PROCESS */
+    .process {
+        padding: 8rem 0;
+    }
+
+    .process-step {
+        margin-bottom: 3rem;
+        padding-left: 2rem;
+        border-left: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .process-step h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* 9. SELECTIVITY */
+    .selective {
+        padding: 6rem 0;
+        background: #101012;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .selective-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+    }
+
+    .selective ul {
+        list-style: none;
+    }
+
+    .selective li {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+        position: relative;
+        color: var(--text-dim);
+    }
+
+    .selective li::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+    }
+
+    /* 10. CTA */
+    .cta {
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .cta h2 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        margin-bottom: 2rem;
+    }
+
+    /* FOOTER */
+    footer {
+        padding: 3rem 0;
+        text-align: center;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        color: rgba(255,255,255,0.2);
+        font-size: 0.8rem;
+    }
+
+    @keyframes fadeIn {
+        to { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+        .manifesto-grid, .framework-item, .case-grid, .selective-grid {
+            grid-template-columns: 1fr;
+        }
+        .framework-item { gap: 0.5rem; }
+    }
+</style>
+</head>
+<body>
+
+<!-- 1. HERO -->
+<section class="hero">
+    <div class="container">
+        <h1>Attention Is Fragile.<br>Structure Is Absolute.</h1>
+        <p>I engineer narrative architectures for documentary films that sustain psychological tension, extend view duration, and turn curiosity into obsession.</p>
+        <div>
+            <a href="#contact" class="btn">Begin Retention Diagnosis</a>
+            <a href="#cases" class="btn btn-secondary">View Narrative Studies</a>
+        </div>
+    </div>
+</section>
+
+<!-- 2. PSYCHOLOGICAL STATEMENT -->
+<section class="statement">
+    <div class="container">
+        <p>"Retention is not about what you say. It is about what you withhold. The viewer does not watch for information; they watch for the resolution of tension."</p>
+    </div>
+</section>
+
+<!-- 3. PHILOSOPHY -->
+<section class="manifesto">
+    <div class="container">
+        <span class="section-title">The Philosophy</span>
+        <div class="manifesto-grid">
+            <div class="manifesto-text">
+                <p>Most creators confuse information with engagement. They believe that if the facts are interesting, the viewer will stay. This is false. Facts are data. Narrative is the engine that moves data through the mind.</p>
+                <p>I do not write scripts. I design psychological environments. Spaces where the viewer enters and cannot leave until the door is unlocked from the inside. This requires architecture, not just writing.</p>
+            </div>
+            <div class="manifesto-text">
+                <p>Tension is structural. It is built beam by beam, question by question. A documentary without structure is a lecture. A documentary with structure is a trap. I build the trap.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4. FRAMEWORK -->
+<section class="framework">
+    <div class="container">
+        <span class="section-title">The Retention Framework</span>
+        
+        <div class="framework-item">
+            <h3>Information Gap Calibration</h3>
+            <p>The strategic withholding of answers. We open a question, delay the resolution, and introduce a new question before closing the first. The brain cannot disengage from an open loop.</p>
+        </div>
+
+        <div class="framework-item">
+            <h3>Escalation Mapping</h3>
+            <p>A narrative must climb. We map the emotional stakes of the story, ensuring that minute 10 carries more weight than minute 5. Stagnation is the enemy of retention.</p>
+        </div>
+
+        <div class="framework-item">
+            <h3>Pattern Interrupt Placement</h3>
+            <p>Predictability kills attention. We inject calculated shifts in tone, pacing, or perspective every 120 seconds to reset the viewer's dopamine baseline.</p>
+        </div>
+
+        <div class="framework-item">
+            <h3>Emotional Mirror Technique</h3>
+            <p>We do not just report facts; we anchor them in human experience. We force the viewer to see themselves in the subject, turning observation into empathy.</p>
+        </div>
+
+        <div class="framework-item">
+            <h3>Controlled Ambiguity</h3>
+            <p>We resist the urge to over-explain. By leaving strategic gaps in the narrative, we force the viewer to lean in and participate in the investigation.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 5. WHY SCRIPTS FAIL (Text Only Block) -->
+<section class="statement" style="background: #0D0D0F; padding: 6rem 0;">
+    <div class="container">
+        <span class="section-title">Why Scripts Fail</span>
+        <p style="font-size: 1.5rem;">Most documentaries fail not because the topic is boring, but because the structure is linear. A straight line has no tension. We build spirals.</p>
+    </div>
+</section>
+
+<!-- 6. CASE STUDIES -->
+<section id="cases" class="cases">
+    <div class="container">
+        <span class="section-title">Narrative Studies</span>
+
+        <!-- Case 1 -->
+        <div class="case-card">
+            <span class="case-meta">Case Study 01 • The Vanishing</span>
+            <h3>The Dyatlov Pass Incident</h3>
+            <div class="case-grid">
+                <div class="case-col">
+                    <h4>The Problem</h4>
+                    <p>A widely known story. The audience thinks they already know the ending. How do we hold attention when the mystery is 60 years old?</p>
+                </div>
+                <div class="case-col">
+                    <h4>The Strategy</h4>
+                    <p>The "False Hypothesis." We present the three most common theories as truth, then systematically dismantle them, forcing the viewer to question their own knowledge.</p>
+                </div>
+                <div class="case-col">
+                    <h4>The Impact</h4>
+                    <p>Sustained curiosity loops. The viewer stays not to learn what happened, but to find out why their assumption was wrong.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Case 2 -->
+        <div class="case-card">
+            <span class="case-meta">Case Study 02 • The Heist</span>
+            <h3>D.B. Cooper</h3>
+            <div class="case-grid">
+                <div class="case-col">
+                    <h4>The Problem</h4>
+                    <p>Low visual assets. A story that takes place entirely inside a plane. Risk of visual fatigue.</p>
+                </div>
+                <div class="case-col">
+                    <h4>The Strategy</h4>
+                    <p>"Tick-Tock Pacing." We synced the script to the real-time flight path minutes. The narrative moves at the speed of the jet.</p>
+                </div>
+                <div class="case-col">
+                    <h4>The Impact</h4>
+                    <p>Artificial urgency. Even though the event is historical, the viewer feels the pressure of the present moment.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- 7. PROCESS -->
+<section class="process">
+    <div class="container">
+        <span class="section-title">The Protocol</span>
+        
+        <div class="process-step">
+            <h3>01. Narrative Diagnosis</h3>
+            <p>We analyze your source material. We find the "Unseen Angle"—the one thread that connects the facts to a deeper truth.</p>
+        </div>
+
+        <div class="process-step">
+            <h3>02. Structural Blueprint</h3>
+            <p>Before a word is written, we map the beats. We identify the Cold Open, the Mid-Point Twist, and the Philosophical Turn.</p>
+        </div>
+
+        <div class="process-step">
+            <h3>03. Script Engineering</h3>
+            <p>Drafting the narrative with precise attention to visual cues, audio transitions, and spoken rhythm. Writing for the edit.</p>
+        </div>
+
+        <div class="process-step">
+            <h3>04. Calibration</h3>
+            <p>Refining the language. Cutting the fluff. Sharpening the hooks. Ensuring every sentence earns its place.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 9. SELECTIVITY -->
+<section class="selective">
+    <div class="container">
+        <div class="selective-grid">
+            <div>
+                <h3 style="margin-bottom: 1.5rem; color: #fff;">For Creators Who:</h3>
+                <ul>
+                    <li>View YouTube as cinema, not content.</li>
+                    <li>Prioritize AVD over clickbait.</li>
+                    <li>Are willing to challenge their audience.</li>
+                    <li>Understand that quality is the only moat left.</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="margin-bottom: 1.5rem; color: #555;">Not For:</h3>
+                <ul>
+                    <li>Daily uploaders looking for "filler."</li>
+                    <li>Channels relying on listicles or AI-voiceovers.</li>
+                    <li>Creators who want "just a writer."</li>
+                    <li>Those unwilling to invest in pre-production.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 10. CTA -->
+<section id="contact" class="cta">
+    <div class="container">
+        <h2>Your Story Deserves Structure.</h2>
+        <p style="margin-bottom: 3rem; color: var(--text-dim);">Stop leaking viewers. Start engineering obsession.</p>
+        <a href="https://formsubmit.co/chaitanya.krishna2608@gmail.com" class="btn">Initiate Collaboration</a>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>Retention Architect © 2026. Narrative Engineering.</p>
+    </div>
+</footer>
+
+</body>
+</html>
